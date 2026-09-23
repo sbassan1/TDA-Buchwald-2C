@@ -19,36 +19,61 @@ SUM [2,  4] == [6]
 
 """
 
-def maxCrossingSum(arr1, arr2):
+def suma_mitades(arr, inicio, medio, fin):
+    suma_izq = 0
+    suma_izq_max = float("-inf")
+    indice_izq = medio
+    for i in range(medio, inicio - 1, -1):
+        suma_izq += arr[i]
+        if suma_izq > suma_izq_max:
+            suma_izq_max = suma_izq
+            indice_izq = i
 
-    # Include elements on the left of mid
-    leftSum = float('-inf')
-    sum = 0
-    for i in range(m, l - 1, -1):
-        sum += arr[i]
-        leftSum = max(leftSum, sum)
+    suma_der = 0
+    suma_der_max = float("-inf")
+    indice_der = medio + 1
+    for i in range(medio + 1, fin + 1):
+        suma_der += arr[i]
+        if suma_der > suma_der_max:
+            suma_der_max = suma_der
+            indice_der = i
 
-    # Include elements on the right of mid
-    rightSum = float('-inf')
-    sum = 0
-    for i in range(m, h + 1):
-        sum += arr[i]
-        rightSum = max(rightSum, sum)
+    return (suma_izq_max + suma_der_max, indice_izq, indice_der)
 
-    # Return the maximum of left sum, right sum, and their combination
-    return max(leftSum + rightSum - arr[m], leftSum, rightSum)
+def sublista_maxima(arr, inicio, fin):
+    if inicio == fin:
+        return arr[inicio], inicio, fin
+
+    medio = (inicio + fin) // 2
+
+    max_izq, inicio_izq, fin_izq = sublista_maxima(arr, inicio, medio)
+    max_der, inicio_der, fin_der = sublista_maxima(arr, medio + 1, fin)
+    max_mitades, idx_izq, idx_der = suma_mitades(arr, inicio, medio, fin)
+
+    if max_izq >= max_der and max_izq >= max_mitades:
+        return max_izq, inicio_izq, fin_izq
+    elif max_der >= max_izq and max_der >= max_mitades:
+        return max_der, inicio_der, fin_der
+    else:
+        return max_mitades, idx_izq, idx_der
 
 def max_subarray(arr):
+    if not arr:
+        return []
 
-    if arr == []:
-        return 0
-    if len(arr) <= 1:
-        return arr[0]
+    _, inicio, fin = sublista_maxima(arr, 0, len(arr) - 1)
+    return arr[inicio : fin + 1]
 
 
-    mid = len(arr) // 2
+"""
+Complejidad usando division y conquista segun el teorema maestro:
 
-    left = max_subarray(arr[:mid])
-    right = max_subarray(arr[mid:])
+    O(n) = a * T(n/b) + C
 
-    return arr[:]
+    Donde:
+        a = 2 # Tenemos dos llamados recursivos
+        b = 2 # Dividimos el tamaño del problema a la mitad 
+        C = O(n) # Cuando juntamos los resultados de las mitades sumandolas
+
+        Como C == n^(log2 2) entonces O(n) = O(n^(log2 2) log n): O(n log n)
+"""
