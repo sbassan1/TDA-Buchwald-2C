@@ -9,18 +9,9 @@ cantidad de espacios vacíos). Indicar y justificar la complejidad del algoritmo
 Para esta resolución en RPL, devolver una lista con los valores de los grupos a ubicar, en el orden original en el que se encontraban en el vector P.
 """
 
-# Tenemos P = [p1, p2, ..., pn] con pi la cantidad de personas del grupo i
-# W es la cantidad de lugares disponibles en la mesa
-# Los familiares se deben sentar todos juntos, no separados
 
-# La idea es usar programacion dinamica para minimizar la cantidad de espacios vacios,
-# es decir, maximizar la cantidad de personas que se sienten en la mesa.
+def bodegon_dinamico(P, W): # P es un array con la cantidad de personas de cada grupo y W es la cantidad de lugares disponibles en total
 
-# Por lo tanto, tenemos dos opciones, una familia se sienta en la mesa entera, o no se sienta.
-# Si se sienta sumamos pi a la cantidad de personas que se sentaron.
-
-
-def bodegon_dinamico(P, W):
     if not P or W <= 0:
         return []
 
@@ -28,18 +19,16 @@ def bodegon_dinamico(P, W):
     mem = [[0] * (W + 1) for _ in range(n + 1)] # mem[i][w]: es la cantidad maxima de personas que se pueden sentar con los primeros i grupos y w lugares disponibles
 
     for i in range(1, n + 1):
-
-        personas = P[i - 1]
+        cant_personas_grupo = P[i - 1]
         for w in range(W + 1):
-            if personas <= w:
-                mem[i][w] = max(mem[i - 1][w], personas + mem[i - 1][w - personas])
-            else:
+            if cant_personas_grupo <= w: # Si la mesa tiene al menos W lugares disponibles para el grupo i, se puede sentar o no se sienta
+                mem[i][w] = max(mem[i - 1][w], cant_personas_grupo + mem[i - 1][w - cant_personas_grupo])
+            else:  # Si no hay suficientes lugares disponibles, no se sienta
                 mem[i][w] = mem[i - 1][w]
-
 
     grupos_elegidos = []
     w = W
-    for i in range(n, 0, -1):
+    for i in range(n, 0, -1): # Vemos que grupos son diferentes al comparar los lugares disponibles
         if mem[i][w] != mem[i - 1][w]:
             grupos_elegidos.append(P[i - 1])
             w -= P[i - 1]
@@ -47,3 +36,8 @@ def bodegon_dinamico(P, W):
     grupos_elegidos.reverse()
 
     return grupos_elegidos
+
+"""
+La complejidad del algoritmo es O(n * W) + O(n) == O(n * W), donde n es la cantidad de grupos y W es la cantidad de lugares disponibles.
+Esto es debido a que el algoritmo cubre un doble bucle para llenar la matriz de memoria y luego itera por cada grupo para saber si se debe incluir o no en la solución.
+"""
