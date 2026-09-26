@@ -1,79 +1,77 @@
 """
-Dado un arreglo de n enteros (no olvidar que pueden haber números negativos), encontrar el subarreglo contiguo
-de máxima suma, utilizando División y Conquista. Indicar y justificar la complejidad del algoritmo.
-Ejemplos:
-    [5, 3, 2, 4, -1] ->  [5, 3, 2, 4]
-    [5, 3, -5, 4, -1] ->  [5, 3]
-    [5, -4, 2, 4, -1] -> [5, -4, 2, 4]
-    [5, -4, 2, 4] -> [5, -4, 2, 4]
-    [-3, 4, -1, 2, 1, -5] -> [4, -1, 2, 1]
+Se cuenta con un arreglo de enteros ordenado de manera ascendente que contiene exactamente un número duplicado (es decir, todos los demás elementos son distintos, sin duplicados). Implementar una función que encuentre dicho número utilizando división y conquista. Indicar y justificar la complejidad del algoritmo, utilizando el Teorema Maestro.
 """
 
-"""
-[5, -4, 2, 4]
 
-SUM [5, -4] == [1]
-SUM [2,  4] == [6]
+def encontrar_num(arr, inicio, fin):
+    if inicio >= fin:
+        if arr[inicio] == arr[inicio+1]:
+            return arr[inicio]
+        else:
+            return None
 
-[7]
+    mitad = (inicio + fin) // 2
 
-"""
+    # Caso base: encontramos los adyacentes iguales
+    if mitad < fin and arr[mitad] == arr[mitad + 1]:
+        return arr[mitad]
+    if mitad > inicio and arr[mitad] == arr[mitad - 1]:
+        return arr[mitad]
 
-def suma_mitades(arr, inicio, medio, fin):
-    suma_izq = 0
-    suma_izq_max = float("-inf")
-    indice_izq = medio
-    for i in range(medio, inicio - 1, -1):
-        suma_izq += arr[i]
-        if suma_izq > suma_izq_max:
-            suma_izq_max = suma_izq
-            indice_izq = i
+    # Búsqueda binaria recursiva
+    # Buscamos en la mitad izquierda
+    izq = encontrar_num(arr, inicio, mitad - 1)
 
-    suma_der = 0
-    suma_der_max = float("-inf")
-    indice_der = medio + 1
-    for i in range(medio + 1, fin + 1):
-        suma_der += arr[i]
-        if suma_der > suma_der_max:
-            suma_der_max = suma_der
-            indice_der = i
+    # Si lo encontramos en la izquierda, lo devolvemos
+    if izq is not None:
+        return izq
 
-    return (suma_izq_max + suma_der_max, indice_izq, indice_der)
+    # Si no, está en la derecha
+    return encontrar_num(arr, mitad + 1, fin)
 
-def sublista_maxima(arr, inicio, fin):
-    if inicio == fin:
-        return arr[inicio], inicio, fin
 
-    medio = (inicio + fin) // 2
-
-    max_izq, inicio_izq, fin_izq = sublista_maxima(arr, inicio, medio)
-    max_der, inicio_der, fin_der = sublista_maxima(arr, medio + 1, fin)
-    max_mitades, idx_izq, idx_der = suma_mitades(arr, inicio, medio, fin)
-
-    if max_izq >= max_der and max_izq >= max_mitades:
-        return max_izq, inicio_izq, fin_izq
-    elif max_der >= max_izq and max_der >= max_mitades:
-        return max_der, inicio_der, fin_der
-    else:
-        return max_mitades, idx_izq, idx_der
-
-def max_subarray(arr):
-    if not arr:
-        return []
-
-    _, inicio, fin = sublista_maxima(arr, 0, len(arr) - 1)
-    return arr[inicio : fin + 1]
-
+def elemento_duplicado(arr):
+    return encontrar_num(arr, 0, len(arr) - 1)
 
 """
-Complejidad usando division y conquista segun el teorema maestro:
+Utilizando teorema maestro:
+    T(n) = 2 T(n/2) + O(n^1)
 
-    O(n) = a * T(n/b) + C
+    a = 2, b = 2, c = 1
 
-    Donde:
-        a = 2 # Tenemos dos llamados recursivos
-        b = 2 # Dividimos el tamaño del problema a la mitad 
-        C = O(n) # Cuando juntamos los resultados de las mitades sumandolas
-
-        Como C == n^(log2 2) entonces O(n) = O(n^(log2 2) log n): O(n log n)
+    Como Log2 2 == 1 crece igual que O(n^1) entonces, estamos en el 
+    2do caso del teorema maestro ==> O(n^log2 2 log n) ==> O(n log n)
 """
+
+
+arr = [5, 5, 12]
+print("\n")
+print(elemento_duplicado(arr), 5)
+
+arr = [10, 15, 20, 20, 30]
+print("\n")
+print(elemento_duplicado(arr), 20)
+
+arr = [1, 4, 9, 16, 25, 40, 40]
+print("\n")
+print(elemento_duplicado(arr), 40)
+
+arr = [3, 8, 8, 15, 23, 42, 50, 61, 70, 88]
+print("\n")
+print(elemento_duplicado(arr), 8)
+
+arr = [2, 5, 8, 11, 14, 17, 20, 20, 26, 29, 32, 35, 38, 41, 44]
+print("\n")
+print(elemento_duplicado(arr), 20)
+
+arr = [-100, -80, -60, -40, -20, -10, -5, 0, 5, 10, 15, 20, 25, 30, 30, 45, 50, 60, 70, 80]
+print("\n")
+print(elemento_duplicado(arr), 30)
+
+arr = [i * 3 for i in range(15)] + [42] + [i * 3 for i in range(15, 49)]
+print("\n")
+print(elemento_duplicado(arr), 42)
+
+arr = list(range(10, 109)) + [108]
+print("\n")
+print(elemento_duplicado(arr), 108)
