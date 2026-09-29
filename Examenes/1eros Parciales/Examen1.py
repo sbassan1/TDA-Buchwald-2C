@@ -46,7 +46,6 @@ Por lo que nos da: log2 1 = 0 y c = 0, estamos en el segundo caso por lo que la 
 # Si no es posible llegar al punto entonces devolvemos -1
 
 def ej2(provisiones_oasis, distancias, prov_iniciales, KM_PROVISION):
-    n = len(provisiones_oasis)
     req_tramos = [d * KM_PROVISION for d in distancias]
 
     paradas = []
