@@ -28,16 +28,4 @@ La complejidad del algoritmo es O(n log n) ya que el ordenamiento de los product
 Si sabemos que la inflacion de todos los productos siempre dará un R[i]^{j + 1}, entonces los productos mas caros siempre subiran en valor de forma más grande, por lo tanto
 si queremos minimizar el costo final, debemos comprar los productos mas caros primero.
 
-Tenemos que en un caso base R[0] es el unico producto y será el costo total
-
-En casos donde hay mas de un producto, el algoritmo greedy siempre encontrara la solucion optima. Voy a demostrarlo con induccion.
-
-P(n): Para cualquier conjunto de n productos, el algoritmo greedy encuentra la solución óptima.
-
-Hipotesis Inductiva: Para un conjunto de k productos, el algoritmo greedy encuentra la solución óptima.
-
-Paso Base: Si k = 1, el algoritmo greedy encuentra la solución óptima.
-
-Paso Inductivo: Si k > 1, el algoritmo greedy encuentra la solución óptima.
-
 """
