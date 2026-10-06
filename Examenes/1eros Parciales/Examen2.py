@@ -104,7 +104,6 @@ def saltos_minimos(arr):
             continue
 
         max_pasos = arr[i]
-
         # Probamos todos los saltos posibles desde la posición i
         for salto in range(1, max_pasos + 1):
             j = i + salto
