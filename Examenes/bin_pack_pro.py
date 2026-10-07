@@ -10,7 +10,6 @@ def bin_packing_backtracking(items, capacity):
 
     mejor = [[item] for item in items]
 
-    # Llamada recursiva inicial pasándole la lista vacía de contenedores 'conten'
     mejor_solucion = bin_packing_backtracking_rec(
         items, capacity, 0, [], mejor
     )
@@ -36,8 +35,8 @@ def bin_packing_backtracking_rec(items, capacity, i, conten, mejor):
             c.pop()
 
     if len(conten) + 1 < len(mejor):
-        conten.append([item]) 
+        conten.append([item])
         mejor = bin_packing_backtracking_rec(items, capacity, i + 1, conten, mejor)
-        conten.pop() 
+        conten.pop()
 
     return mejor
