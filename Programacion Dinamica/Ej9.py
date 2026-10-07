@@ -1,38 +1,34 @@
 """
-Se tiene un sistema monetario (ejemplo, el nuestro). Se quiere dar "cambio" de una determinada cantidad de plata. Se desea devolver el cambio pedido, usando la mínima cantidad de monedas/billetes. Implementar un algoritmo que, por programación dinámica, reciba un arreglo de valores del sistema monetario, y la cantidad de cambio objetivo a dar, y devuelva qué monedas/billetes deben ser utilizados para minimizar la cantidad total utilizda. Indicar y justificar la complejidad del algoritmo implementado.
+Tenemos un conjunto de números v_1, v_2, …, v_n, y queremos obtener un subconjunto de todos esos números tal que su suma sea igual o menor a un valor V, tratando de aproximarse lo más posible a V. Implementar un algoritmo que, por programación dinámica, reciba un arreglo de valores, y la suma objetivo V, y devuelva qué elementos deben ser utilizados para aproximar la suma lo más posible a V, sin pasarse. Indicar y justificar la complejidad del algoritmo implementado.
 """
 
-"""
-La complejidad es O(n*m), ya que iteramos por la cantidad de monedas y luego por la cantidad
-de monto posible para cada combinacion.
-"""
-
-def cambio(monedas, monto):
-    INF = monto + 1
-    mem = [INF] * (monto + 1)
-    mem[0] = 0 
-    
-    # parent[j] guardará la moneda usada para llegar al monto j
-    parent = [-1] * (monto + 1)
-
-    # Rellenar la tabla DP
-    for j in range(1, monto + 1):
-        for moneda in monedas:
-            if j - moneda >= 0:
-                if mem[j - moneda] + 1 < mem[j]:
-                    mem[j] = mem[j - moneda] + 1
-                    parent[j] = moneda
-
-    # Si no se puede formar el monto objetivo
-    if mem[monto] == INF:
+def subset_sum(elementos, v):
+    n = len(elementos)
+    if v == 0 or n == 0:
         return []
 
-    # Reconstrucción de las monedas utilizadas
-    sol = []
-    curr = monto
-    while curr > 0:
-        moneda_usada = parent[curr]
-        sol.append(moneda_usada)
-        curr -= moneda_usada
+    dp = [[0] * (v + 1) for _ in range(n + 1)]
 
+    for i in range(1, n + 1):
+        elem = elementos[i - 1]
+        for j in range(1, v + 1):
+            if elem <= j:
+                dp[i][j] = max(dp[i - 1][j], elem + dp[i - 1][j - elem])
+            else:
+                dp[i][j] = dp[i - 1][j]
+
+    sol = []
+    i, j = n, v
+    while i > 0 and j > 0:
+        if dp[i][j] != dp[i - 1][j]:
+            elem = elementos[i - 1]
+            sol.append(elem)
+            j -= elem
+        i -= 1
+
+    sol.reverse()
     return sol
+
+"""
+La complejidad del algoritmo es O(n*v) ya que iteramos por la cantidad de monedas y la cantidad de valor posible que podamos hallar
+"""
