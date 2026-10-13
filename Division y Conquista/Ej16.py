@@ -15,19 +15,28 @@ def maximo_local(matriz):
 
 def maximo_local_rec(matriz, ini_x,ini_y,fin_x,fin_y):
 
-    if ini_x == ini_y:
+    if ini_x == ini_y: # Una matriz de 1 valor
         return ini_x, ini_y
 
     mid_x = (ini_x + fin_x) // 2
     mid_y = (ini_y + fin_y) // 2
 
-    for x in range(fin_x-ini_x):
-        if es_max_local(x,mid_y,matriz):
-            return (x,mid_y)
-    for y in range(fin_y-ini_y):
-        if es_max_local(y,mid_y,matriz):
-            return (mid_x,y)
+    valor_max = matriz[mid_x][mid_y]
+    punto_max = (mid_x, mid_y)
 
-    x,y = encontrar_mas_grande(mitad_x,mitad_y)
+    for x in range(fin_x-ini_x):
+        if matriz[x][mid_y] > valor_max:
+            punto_max = (x,mid_y)
+            valor_max = matriz[x][mid_y]
+        
+    for y in range(fin_y-ini_y):
+        if matriz[mid_x][y] > valor_max:
+            punto_max = (mid_x,y)
+            valor_max = matriz[mid_x][y]
+
+    if es_max_local(punto_max, valor_max, matriz):
+        return punto_max
+
+    ini_x, ini_y, fin_x, fin_y = encontrar_mas_grande(punto_max,matriz) # Si no es el max local busco el cuadrante con el punto mas grande
     
     return maximo_local_rec(matriz, ini_x,ini_y,fin_x,fin_y)

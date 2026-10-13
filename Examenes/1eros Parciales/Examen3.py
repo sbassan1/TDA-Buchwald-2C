@@ -79,7 +79,6 @@ por lo que el total nos da O(n log n) + O(n) ==> O(n log n)
 """
 
 
-
 """
 El problema conocido como Feedback Edge Set (FES) (cómo problema de optimización) indica: Dado un grafo dirigido, obtener la menor cantidad de aristas a eliminar de dicho grafo de tal manera que el grafo quede acíclico. Implementar un algoritmo que, por backtracking, resuelva el problema. Podés considerar que existe una función tiene_ciclo(grafo, vértices) que devuelve true si el grafo tiene algún ciclo en la componente débilmente conexa definida por los vértices pasados por parámetro, y también la función componentes_debilmente_conexas(grafo, vertices) que devuelve una lista de listas, cada una con una componente débilmente conexa del grafo entre los vértices definidos por parámetro.
 """

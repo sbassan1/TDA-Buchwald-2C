@@ -79,7 +79,9 @@ def clique_rec(grafo, vert, i, sol_actual, mejor_sol):
 Patricio es el hermano de Juan (sí, el vago), y tiene una filosofía muy parecida a la de él. El problema es que la lleva a un extremo: no le interesa en lo más mínimo el dinero. Si fuera por Patricio, no agarraría la pala ningún día de su vida pero, por mala suerte, la vida no es tan sencilla. Su jefe ya le ha llamado la atención, por lo que sabe que no puede estar dos días seguidos sin trabajar. Tiene un arreglo de n valores, donde el elemento i indica el esfuerzo de trabajar el día i (cada día demanda un esfuerzo diferente). Patricio puede elegir trabajar un día, o no trabajar. Implementar un algoritmo que, por programación dinámica, obtenga el mínimo esfuerzo total (suma de esfuerzos) a trabajar en el período de n días, con la restricción que Patricio no puede estar dos días seguidos sin trabajar. También escribir el algoritmo que permita reconstruir la solución. Indicar y justificar la complejidad del algoritmo implementado (el de programación dinámica, y también el de la reconstrucción).
 """
 
+# Lista de ints para esfuerzos 
 def patricio_vago(esfuerzos):
+    
     n = len(esfuerzos)
     if n == 0:
         return []

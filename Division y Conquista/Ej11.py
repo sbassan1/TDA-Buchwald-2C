@@ -10,6 +10,8 @@ def obtener_candidato_rec(arr, inicio, fin):
     medio_izq = (inicio + fin) // 3
     medio_der = 2 * ((inicio + fin) // 3)
 
+    
+
 def mas_de_dos_tercios(arr):
 
     if not arr:

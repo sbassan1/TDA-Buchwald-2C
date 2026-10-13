@@ -75,9 +75,7 @@ def ej2(provisiones_oasis, distancias, prov_iniciales, KM_PROVISION):
     Recordamos el problema de Interval Scheduling: Dado un conjunto de charlas a dar, con un horario de inicio y fin cada una, determinar la máxima cantidad de charlas a dar de tal forma que no haya solapamiento de horarios entre ninguna de las elegidas (devolviendo las charlas que logran esto). Resolver el problema de Interval Scheduling utilizando backtracking.
 """
 
-def ej3(charlas):
-    return backtracking_charlas(charlas, 0, [])
-
+"""
 def backtracking_charlas(charlas, i, seleccionadas):
 
     if i == len(charlas):
@@ -98,6 +96,45 @@ def backtracking_charlas(charlas, i, seleccionadas):
         return opcion_con
     else:
         return opcion_sin
+"""
+
+def ej3(charlas):
+    # Devuelve la lista de charlas elegidas que maximiza la cantidad
+    return backtracking_charlas(charlas, 0, [], [])
+
+
+def es_compatible(charla, solucion):
+    # Si no hay charlas elegidas, siempre es compatible
+    if not solucion:
+        return True
+    
+    # Supone que cada charla es una tupla/lista: (inicio, fin)
+    fin_ultima = solucion[-1][1]
+    inicio_nueva = charla[0]
+    
+    # Es compatible si la nueva empieza cuando o después de que termina la última
+    return inicio_nueva >= fin_ultima
+
+
+def backtracking_charlas(charlas, i, sol, mejor):
+    if i == len(charlas):
+        if len(sol) > len(mejor):
+            return sol.copy()
+        return mejor
+
+    if len(sol) + (len(charlas) - i) <= len(mejor):
+        return mejor
+
+    charla = charlas[i]
+
+    if es_compatible(charla, sol):
+        sol.append(charla)
+        mejor = backtracking_charlas(charlas, i + 1, sol, mejor)
+        sol.pop()
+
+    mejor = backtracking_charlas(charlas, i + 1, sol, mejor)
+
+    return mejor
 
 """
 # Ejercicio 4

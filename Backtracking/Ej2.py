@@ -35,7 +35,6 @@ def colorear_rec(grafo, vertices, i, n, colores):
     if i == len(vertices):
         return True
 
-
     for color in range(n): # Color 0..n
         vertice = vertices[i]
 
@@ -46,8 +45,6 @@ def colorear_rec(grafo, vertices, i, n, colores):
                 return True
 
             colores[vertice] = None
-
-        colorear_rec(grafo, vertices, i+1, n, colores)
 
     return False
 
