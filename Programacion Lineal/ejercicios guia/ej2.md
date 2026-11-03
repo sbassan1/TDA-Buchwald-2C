@@ -27,6 +27,8 @@ $$
 
 ## 3. Función Objetivo
 
+Maximizar la cantidad de ganancia de los dias que se trabaja
+
 $ max( \sum_{i=0}^{n} x_i * V_i )$
 
 ---
