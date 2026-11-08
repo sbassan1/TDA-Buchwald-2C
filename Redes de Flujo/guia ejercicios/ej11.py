@@ -19,8 +19,6 @@ Tenemos tres copias de cada libro, cada alumno quiere libros diferentes.
 
 """
 
-from Backtracking.grafo import Grafo
-
 #pedidos es un diccionario donde las llaves son los alumnos y los valores son una lista de libros
 
 from Backtracking.grafo import Grafo
