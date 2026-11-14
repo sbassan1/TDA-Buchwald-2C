@@ -20,8 +20,10 @@ Esto funciona ya que:
 
 """
 
+from Backtracking.grafo import Grafo
 
-def verificar_pagos_mafia(grafo_original, w):
+
+def verificar_pagos_mafia(grafo_original: Grafo, w):
 
     S = "SuperFuente"
     T = "SuperSumidero"
@@ -41,7 +43,7 @@ def verificar_pagos_mafia(grafo_original, w):
             demanda_total += -val
             grafo_original.agregar_arista(vert, T, -val) # Valor va a ser negativo, asi que lo damos vuelta 
         elif val > 0:
-            grafo_original,agregar_arista(S,vert, val)
+            grafo_original.agregar_arista(S,vert, val)
 
 
     flujo = flujo(grafo_original,S,T)

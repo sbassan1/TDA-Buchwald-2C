@@ -19,8 +19,6 @@
 - $A_{i,j} \in \{0, 1\}$: matriz constante donde $A_{i,j} = 1$ si la persona $i$ pertenece al club $j$, y $0$ en otro caso.
 - $B_{i,p} \in \{0, 1\}$: matriz constante donde $B_{i,p} = 1$ si la persona $i$ pertenece al partido $p$, y $0$ en otro caso.
 
-
-
 ### Variables de Decisión:
 
 - $Y_{i,j} \in \{0,1\}$ : Variable binaria que decide si el miembro i, es miembro del club j y representante 
