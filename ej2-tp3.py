@@ -1,21 +1,6 @@
 
-"""
-Los hermanos siguieron creciendo. Mateo también aprendió sobre programación dinámica, y cada uno aplicaba la lógica sabiendo que el otro también lo hacía. El juego de las monedas se tornó aburrido en cuánto notaron que siempre ganaba quien empezara, o según la suerte. Los años pasaron, llegó la adolescencia y empezaron a tener gustos diferentes. En general, jugaban a juegos individuales. En particular, Sophia estaba muy enganchada con el siguiente juego de tipo puzzle: El juego consiste de una grilla de n×mn×m celdas. Cada celda puede estar vacía, estar ocupada por una piedra verde, o estar ocupada por una piedra celeste. El objetivo original del juego es remover algunas de las piedras de tal forma que las piedras que quedan cumplan las siguientes condiciones:
-
-    Cada fila tiene al menos una piedra.
-    Ninguna columna tiene piedras de ambos colores.
-
-Para algunos estados iniciales esto puede ser imposible. Por ejemplo, el siguiente tablero no tiene solución:
-
-*Imagen de tablero*
-
-La segunda fila obliga a que la primera columna quede celeste, con lo cual la primera fila solo puede quedar con la piedra celeste de la tercera columna. Pero la tercera fila solo tiene la piedra verde de la tercera columna, por lo que esa columna tendría que quedar con ambos colores.
-
-A Sophia le interesa tanto esta versión, como también aquella que relaja la primera restricción, obteniendo una solución que maximice la cantidad de fila que cumplen la restricción (manteniendo siempre la segunda restricción). Es decir, minimizar la cantidad de filas que quedan vacías.
-"""
-
-# En este verificamos que solo aplique la 2da condicion:
-#   Ninguna columna tiene piedras de ambos colores.
+import random
+import time
 
 def verificador_relajado(grilla: list[list[str]]) -> bool:
     if not grilla or not grilla[0]:
@@ -29,8 +14,6 @@ def verificador_relajado(grilla: list[list[str]]) -> bool:
     
     for fila in grilla:
         for j, color in enumerate(fila):
-            if color not in COLORES and color != ".":
-                return False
 
             if color == "V":
                 hay_verde_col[j] = True
@@ -43,51 +26,144 @@ def verificador_relajado(grilla: list[list[str]]) -> bool:
 
     return True
 
-def sol_opt(grilla):
 
+def cant_filas_no_vacias(grilla) -> int:    
+    count = 0
+    for fila in grilla:
+        if any(celda != "." for celda in fila):
+            count += 1
+    return count
+
+
+def sol_opt(grilla):
     n = len(grilla)
     l = len(grilla[0])
-
-    COLORES = ['V' , 'C']
-
+    COLORES = ['V', 'C']
     puntos = []
 
     for i in range(n):
         for j in range(l):
             if grilla[i][j] in COLORES:
-                puntos.append((i,j))
+                puntos.append((i, j))
 
-    
+    return sol_bt(grilla, puntos, 0, len(puntos), None)
 
-    return sol_bt(grilla, puntos, i,len(puntos), [])
 
-def cant_filas_validas(grilla):    
-    i = 0
-    for fila in grilla:
-        tiene_piedra = any(celda != "." for celda in fila)
-        if tiene_piedra:
-            i += 1
-            
-    return i
+def sol_bt(grilla, puntos, idx, total_puntos, mejor_sol):
 
-def sol_bt(grilla, puntos, i, n, mejor_sol):
+    # Si mejor_sol ya logró cubrir todas las filas, no se puede mejorar
+    if mejor_sol is not None and cant_filas_no_vacias(mejor_sol) == len(grilla):
+        return mejor_sol
 
-    if i == n:
+    # Si llegamos al final y la grilla es valida comparamos con la mejor sol
+    if idx == total_puntos:
         if verificador_relajado(grilla):
-            if mejor_sol is None or cant_filas_validas(grilla) > cant_filas_validas(mejor_sol):
-                return [fila[:] for fila in grilla] # Es una copia exacta de grilla, ya que grilla es mutable
-        return mejor_sol # Si hay optima la devolvemos
+            if mejor_sol is None or cant_filas_no_vacias(grilla) > cant_filas_no_vacias(mejor_sol):
+                return [fila[:] for fila in grilla]
+        return mejor_sol
 
-    x, y = puntos[i]
-    color_original = grilla[x][y]  # Guardamos el color para restaurarlo después
+    x, y = puntos[idx]
+    color_original = grilla[x][y]
 
-    # Mantener la piedra
-    mejor_sol = sol_bt(grilla, puntos, i + 1, n, mejor_sol)
+    # Mantenemos la piedra
+    mejor_sol = sol_bt(grilla, puntos, idx + 1, total_puntos, mejor_sol)
 
-    #Remover la piedra
+    # Eliminamos la piedra
     grilla[x][y] = "."
-    mejor_sol = sol_bt(grilla, puntos, i + 1, n, mejor_sol)
+    mejor_sol = sol_bt(grilla, puntos, idx + 1, total_puntos, mejor_sol)
 
+    # Restauramos la piedra para hacer BT
     grilla[x][y] = color_original
 
     return mejor_sol
+
+
+tablero_3x3 = [
+    ["V", ".", "."],
+    [".", "C", "."],
+    ["V", ".", "."]
+]
+
+tablero_4x4 = [
+    ["C", ".", ".", "."],
+    [".", "V", ".", "."],
+    [".", ".", "V", "."],
+    [".", ".", ".", "C"]
+]
+
+tablero_5x5 = [
+    ["V", ".", ".", ".", "."],
+    [".", ".", "C", ".", "."],
+    ["V", ".", ".", ".", "."],
+    [".", ".", ".", "V", "."],
+    [".", ".", ".", ".", "C"]
+]
+
+tablero_6x6 = [
+    ["C", ".", ".", ".", ".", "."],
+    [".", "V", ".", ".", ".", "."],
+    [".", ".", "C", ".", ".", "."],
+    [".", "V", ".", ".", ".", "."],
+    [".", ".", ".", ".", "V", "."],
+    [".", ".", ".", ".", ".", "C"]
+]
+
+tests = [ 
+    ("3x3", tablero_3x3),
+    ("4x4", tablero_4x4),
+    ("5x5", tablero_5x5),
+    ("6x6", tablero_6x6)
+]
+
+def agregar_piedras_azar(tablero):
+
+    copia = [fila[:] for fila in tablero]
+    n = len(copia)
+    m = len(copia[0]) if n > 0 else 0
+
+    for j in range(m):
+        # Buscar las filas vacías en la columna j
+        vacias = [i for i in range(n) if copia[i][j] == "."]
+        
+        if vacias:
+            # Elegir al azar cuántas agregar (mínimo 1, máximo dejando al menos 1 libre si es posible)
+            max_agregar = max(1, len(vacias) - 1)
+            cantidad = random.randint(1, max_agregar)
+            
+            for i in random.sample(vacias, cantidad):
+                copia[i][j] = random.choice(["V", "C"])
+
+    return copia
+
+
+def mostrar_tablero(tablero):
+    for fila in tablero:
+        print(fila)
+
+muestras_por_tamano = 5
+
+for nombre, tablero_base in tests:
+    tiempos = []
+    print(f"--- Evaluando tableros {nombre} ---")
+
+    print(f"Tablero base: \n")
+    mostrar_tablero(tablero_base)
+    print("\n")
+    
+    for i in range(muestras_por_tamano):
+        muestra = agregar_piedras_azar(tablero_base)
+        
+        inicio = time.perf_counter()
+        solucion = sol_opt(muestra)
+        fin = time.perf_counter()
+        
+        tiempo_ms = (fin - inicio) * 1000
+        tiempos.append(tiempo_ms)
+        
+        es_valida_col = verificador_relajado(solucion)        
+        assert es_valida_col, f"Error: La solución en {nombre} viola la regla de columnas."
+        
+        print(f"  Muestra {i+1}: {tiempo_ms:8.4f} ms | Correcta: OK ")
+        
+    promedio = sum(tiempos) / len(tiempos)
+    print(f"Promedio {nombre}: {promedio:.4f} ms\n")
