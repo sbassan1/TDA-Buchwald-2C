@@ -45,31 +45,37 @@ Por lo que nos da: log2 1 = 0 y c = 0, estamos en el segundo caso por lo que la 
 # Queremos la menor cantidad de paradas usadas
 # Si no es posible llegar al punto entonces devolvemos -1
 
-def ej2(provisiones_oasis, distancias, prov_iniciales, KM_PROVISION):
-    req_tramos = [d * KM_PROVISION for d in distancias]
+import heapq
 
-    paradas = []
+
+def ej2_optimo(provisiones_oasis, distancias, prov_iniciales, KM_PROVISION):
+    n = len(provisiones_oasis)
+    max_heap = []  # Guardará (-provisiones, indice_oasis)
     prov_actuales = prov_iniciales
+    paradas = []
 
-    for i in range(len(req_tramos)):
-        req = req_tramos[i]
+    for i, d in enumerate(distancias):
+        req = d * KM_PROVISION
 
-        if prov_actuales < req:
-            if i == 0 or provisiones_oasis[i - 1] == 0:
-                return -1 # Imposible llegar
+        # Mientras no alcancen las provisiones actuales para el tramo i,
+        # tomamos la mayor recarga disponible de algún oasis ya alcanzado.
+        while prov_actuales < req:
+            if not max_heap:
+                return -1  # No hay más recargas posibles: templo inalcanzable
 
-            # Recargamos en el oasis i-1 (el último que alcanzamos)
-            prov_actuales += provisiones_oasis[i - 1]
-            provisiones_oasis[i - 1] = 0 # Marcamos como usado
-            paradas.append(i)
+            neg_prov, idx_oasis = heapq.heappop(max_heap)
+            prov_actuales += -neg_prov
+            paradas.append(idx_oasis)
 
-            if prov_actuales < req:
-                return -1
-
+        # Cruzamos el tramo i
         prov_actuales -= req
 
-    return paradas
+        # Si al terminar el tramo i llegamos a un oasis (i < n),
+        # queda disponible para futuras recargas si hiciera falta.
+        if i < n and provisiones_oasis[i] > 0:
+            heapq.heappush(max_heap, (-provisiones_oasis[i], i))
 
+    return sorted(paradas)
 """
 # Ejercicio 3
     Recordamos el problema de Interval Scheduling: Dado un conjunto de charlas a dar, con un horario de inicio y fin cada una, determinar la máxima cantidad de charlas a dar de tal forma que no haya solapamiento de horarios entre ninguna de las elegidas (devolviendo las charlas que logran esto). Resolver el problema de Interval Scheduling utilizando backtracking.
